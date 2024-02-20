@@ -12,5 +12,5 @@ use Inc\SheetApp;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-require __DIR__ .'/vendor/autoload.php';
-(new SheetApp)->start();
+require __DIR__ . '/vendor/autoload.php';
+( new SheetApp() )->start();
