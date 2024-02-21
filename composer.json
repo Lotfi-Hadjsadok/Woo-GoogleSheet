@@ -14,5 +14,13 @@
     "require": {
         "htmlburger/carbon-fields": "^3.6",
         "google/apiclient": "^2.15.0"
+    },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Sheets"
+        ]
     }
 }
