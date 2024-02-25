@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Woo Google Sheet
  * Description: Woocommerce orders to your google sheet page.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: L.hadjsadok
  * Author URI: https://www.facebook.com/lotfihadjsadok.dev
  */
