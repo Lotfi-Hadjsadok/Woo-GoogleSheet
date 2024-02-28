@@ -10,10 +10,13 @@ class GoogleSheetTrigger {
 
 
 	public function order_to_google_sheet( $order_id ) {
-		$order           = wc_get_order( $order_id );
-		$product         = array_values( $order->get_items() )[0]->get_product();
-		$price           = $product->get_price();
-		$product_id      = $product->get_ID();
+		$order   = wc_get_order( $order_id );
+		$product = array_values( $order->get_items() )[0]->get_product();
+		if ( $product->get_type() == 'variation' ) {
+			$product_id = $product->get_parent_id();
+		} else {
+			$product_id = $product->get_ID();
+		}
 		$google_sheet_id = carbon_get_post_meta( $product_id, 'product_google_sheet_id' );
 		$page            = carbon_get_post_meta( $product_id, 'product_google_sheet_page' );
 
@@ -51,10 +54,13 @@ class GoogleSheetTrigger {
 				$sku = $variation->get_sku();
 			}
 		}
-		$data = array();
-        $order_metas = array_map(function($column){
-            return $column['order_meta'];
-        },$columns);
+		$data        = array();
+		$order_metas = array_map(
+			function ( $column ) {
+				return $column['order_meta'];
+			},
+			$columns
+		);
 		foreach ( $order_metas as $order_meta ) {
 			switch ( $order_meta ) {
 				case 'date':
@@ -104,13 +110,16 @@ class GoogleSheetTrigger {
 			}
 		}
 
-		$google_sheet_header = array_map(function($column){
-            return $column['meta_custom_name'];
-        },$columns);
-		$client = ( new GoogleSheet( $google_sheet_id, $page, $google_sheet_header ) );
+		$google_sheet_header = array_map(
+			function ( $column ) {
+				return $column['meta_custom_name'];
+			},
+			$columns
+		);
+		$client              = ( new GoogleSheet( $google_sheet_id, $page, $google_sheet_header ) );
 		$client->append( $data );
 
-        set_transient( $google_sheet_product_transient, true, $_60_minutes );
+		set_transient( $google_sheet_product_transient, true, $_60_minutes );
 		// Expire in 60 minutes to prevent duplicate purchase event of the same product.
 		setcookie( $google_sheet_product_cookie, true, $_60_minutes, '/' );
 	}
